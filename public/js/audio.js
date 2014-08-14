@@ -139,7 +139,10 @@ function encodeFile (file) {
 	  , vendor_length: spxcmt.length
 	});
 
-	r = oggdata.mux([spxhdr.raw, spxcmt.raw, spxdata]);
+	console.log("spxhdr");
+	console.log(spxhdr);
+
+	r = oggdata.mux([spxhdr, spxcmt, spxdata]);
 	performance.mark("encodeEnd");
 	performance.measure("encode", "encodeStart", "encodeEnd");
 	return r;

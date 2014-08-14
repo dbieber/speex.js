@@ -251,7 +251,8 @@ Ogg.prototype.mux = function (d, o) {
 
 	var str = "";
 	var p = "";
-	var hdr = d[0];
+	var header = d[0];
+	var hdr = header.raw;
 	// header page
 	p = this.createPage(OggPageHeader(2,
 			o.length || hdr.length, o.checksum, 0))
@@ -260,10 +261,11 @@ Ogg.prototype.mux = function (d, o) {
 		return str;
 
 	var comments = d[1];
+	var comments_raw = comments.raw;
 	// comments page
 	p = this.createPage(OggPageHeader(0,
-			o.length || comments.length, o.checksum));
-	str += hdrup(p, comments);
+			o.length || comments_raw.length, o.checksum));
+	str += hdrup(p, comments_raw);
 	if (d.length == 2)
 		return str;
 
@@ -278,22 +280,11 @@ Ogg.prototype.mux = function (d, o) {
 	  , len = segments.length;
 
 	var granulePos = 0;
-	var FRAME_SIZE = 320;
+	var frame_size = header.data.frame_size;
 	for (var i = 0; i < len; ++i) {
 		var segchunk = segments[i];
 		b += frames(segchunk);
-		granulePos += segchunk.length * FRAME_SIZE;
-
-		console.log("segchunk");
-		console.log(segchunk);
-		console.log(segchunk.length);
-
-		console.log("b")
-		console.log(b)
-		console.log(b * 320)
-
-		console.log("granulePos")
-		console.log(granulePos)
+		granulePos += segchunk.length * frame_size;
 
 		p = this.createPage(OggPageData(segchunk, granulePos));
 		str += hdrup(p, stream.substring(a, b));
