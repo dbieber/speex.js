@@ -99,9 +99,20 @@ function encodeFile (file) {
 
 	spxcodec.bits_size = isNarrowband ? 15 : 70;
 
+	console.log("pcm")
+	console.log(pcm)
+
+	console.log("pcm.sampleRate")
+	console.log(pcm.sampleRate)
+
 	performance.mark("encodeStart");
 	 // samples
+	console.log("pcm.samples")
+	console.log(pcm.samples)
 	spxdata = spxcodec.encode(pcm.samples, true);
+
+	console.log("spxdata");
+	console.log(spxdata);
 
 	spxhdr = new SpeexHeader({
 		bitrate: -1,

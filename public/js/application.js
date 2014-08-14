@@ -61,6 +61,8 @@ function handleFileSelect(evt, isTypedArray) {
 		} else if (ext == "wav") {
 			var data = e.target.result;
 			samples = Speex.encodeFile(data);
+			console.log("samples");
+			console.log(samples);
 			addDownloadLink(filename+".ogg", "#file_wav",
 				samples, "audio/ogg");
 
