@@ -278,10 +278,23 @@ Ogg.prototype.mux = function (d, o) {
 	  , len = segments.length;
 
 	var granulePos = 0;
+	var FRAME_SIZE = 320;
 	for (var i = 0; i < len; ++i) {
 		var segchunk = segments[i];
 		b += frames(segchunk);
-		granulePos = b * 4;
+		granulePos += segchunk.length * FRAME_SIZE;
+
+		console.log("segchunk");
+		console.log(segchunk);
+		console.log(segchunk.length);
+
+		console.log("b")
+		console.log(b)
+		console.log(b * 320)
+
+		console.log("granulePos")
+		console.log(granulePos)
+
 		p = this.createPage(OggPageData(segchunk, granulePos));
 		str += hdrup(p, stream.substring(a, b));
 
