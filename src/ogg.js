@@ -198,12 +198,12 @@ Ogg.prototype.demux = function () {
 }
 
 Ogg.prototype.mux = function (d, o) {
-	function OggPageHeader(type, length, checksum) {
+	function OggPageHeader(type, length, checksum, granulePos) {
 		return page = {
 			capturePattern: [0x4f, 0x67, 0x67, 0x53]
 		  , version: 0
 		  , headerType: type
-		  , granulePos: 0 // TODO
+		  , granulePos: granulePos || 0
 		  , serial: 406
 		  , sequence: 0
 		  , checksum: checksum || 0
@@ -213,8 +213,8 @@ Ogg.prototype.mux = function (d, o) {
 		};
 	}
 
-	function OggPageData(segments) {
-		var p = OggPageHeader(0);
+	function OggPageData(segments, granulePos) {
+		var p = OggPageHeader(0, null, null, granulePos);
 		p.pageSegments = segments.length;
 		p.segments = segments;
 		return p;
@@ -254,7 +254,7 @@ Ogg.prototype.mux = function (d, o) {
 	var hdr = d[0];
 	// header page
 	p = this.createPage(OggPageHeader(2,
-			o.length || hdr.length, o.checksum))
+			o.length || hdr.length, o.checksum, 0))
 	str = hdrup(p, hdr);
 	if (d.length == 1)
 		return str;
@@ -277,11 +277,12 @@ Ogg.prototype.mux = function (d, o) {
 	  , b = 0
 	  , len = segments.length;
 
+	var granulePos = 0;
 	for (var i = 0; i < len; ++i) {
 		var segchunk = segments[i];
 		b += frames(segchunk);
-
-		p = this.createPage(OggPageData(segchunk));
+		granulePos = b * 4;
+		p = this.createPage(OggPageData(segchunk, granulePos));
 		str += hdrup(p, stream.substring(a, b));
 
 		a = b;
